@@ -3,22 +3,32 @@ package edu.utn.ueed.model;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
+/*
+In charge of sending consumption data to the server.
+
+*** MODIFY SEND METHOD.
+ */
 public class Transmitter {
     private Thread newThread;
     private SerialTransmitter newSTransmitter;
     private Meter oneMeter;
     private int minutesInterval;
+    private boolean initialized;
 
     public Transmitter(Meter oneMeter, int minutesInterval) {
         this.oneMeter = oneMeter;
         this.minutesInterval = minutesInterval;
         this.newSTransmitter = new SerialTransmitter(oneMeter,minutesInterval);
         this.newThread = new Thread(newSTransmitter);
-        this.newThread.start();
+        this.initialized = false;
 
     }
 
-    public void start(){
+    public void start() {
+        if (!initialized){
+            this.newThread.start();
+            this.initialized = true;
+        }
         this.newSTransmitter.setRunning(true);
     }
 
@@ -37,20 +47,18 @@ public class Transmitter {
             this.running = false;
         }
 
-        public int getMinutesInterval() {
-            return minutesInterval;
-        }
-
-        public void setMinutesInterval(int minutesInterval) {
-            this.minutesInterval = minutesInterval;
-        }
-
-        public boolean isRunning() {
-            return running;
-        }
-
         public void setRunning(boolean running) {
             this.running = running;
+        }
+
+        private void sendReport(double accConsumption){
+
+            // remove this line
+            System.out.println("Serial: " + oneMeter.getSerialId() + " - " + oneMeter.getBrand() + " " + oneMeter.getModel() +
+                    "- Accumulated Consumption: " + accConsumption + " Kw.");
+            /*
+            code for sending report to server. (oneMeter POST to Web Service)
+             */
         }
 
         @Override
@@ -58,13 +66,11 @@ public class Transmitter {
             while(true) {
                 while (this.running) {
                     try {
-                        TimeUnit.SECONDS.sleep(this.minutesInterval);
+                        TimeUnit.MINUTES.sleep(this.minutesInterval);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    LocalDateTime now = LocalDateTime.now();
-                    double accMeasurement = this.oneMeter.getAccumulatedMeasurement(LocalDateTime.now());
-                    System.out.println(now + ": " + accMeasurement + " Kw.");
+                    this.sendReport(this.oneMeter.takeMeasurement(LocalDateTime.now()));
                 }
             }
       }

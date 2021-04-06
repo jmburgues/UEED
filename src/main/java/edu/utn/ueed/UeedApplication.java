@@ -15,8 +15,11 @@ public class UeedApplication {
 
 		Meter houseMeter = new Meter("Motorola","AX100");
 		Transmitter serverTransmitter = new Transmitter(houseMeter,5);
-		System.out.println(houseMeter.getConsumptionPerMinute());
 		serverTransmitter.start();
+
+		Meter shopMeter = new Meter("Zyxel","MP110");
+		Transmitter serverTransmitter2 = new Transmitter(shopMeter,5);
+		serverTransmitter2.start();
 
 
 
