@@ -10,7 +10,6 @@ In charge of electric consumption measurement.
 Modificar SECONDS en linea 31 de Meter.java y en linea 60 de Transmitter.java
  */
 
-
 public class Meter {
     private UUID serialId;
     private String brand;
@@ -31,7 +30,7 @@ public class Meter {
         Random r = new Random();
         double consumptionPerMinute = 0.01 + r.nextDouble() * (0.3 - 0.01);
 
-        long unmeasuredMinutes = this.lastMeasurementDate.until(actualDate, ChronoUnit.MINUTES);
+        long unmeasuredMinutes = this.lastMeasurementDate.until(actualDate, ChronoUnit.SECONDS);
         double unmeasuredConsumption = unmeasuredMinutes * consumptionPerMinute;
         this.accumulatedMeasurement += unmeasuredConsumption;
         this.lastMeasurementDate = actualDate;

@@ -66,7 +66,7 @@ public class Transmitter {
             while(true) {
                 while (this.running) {
                     try {
-                        TimeUnit.MINUTES.sleep(this.minutesInterval);
+                        TimeUnit.SECONDS.sleep(this.minutesInterval);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
